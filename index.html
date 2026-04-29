@@ -235,53 +235,19 @@ tr:hover td{background:var(--pk0);}
 </div>
 
 <script>
-const SK='pitchtracker-v3-pitches',CK='pitchtracker-v3-concursos';
-const DP=[
-  {id:1,titulo:"The Night a Lion Taught Me I Wasn't Prey",revA:"AFAR Magazine",secA:"",edA:"Katherine LaGrave",emailA:"klagrave@afar.com",revB:"",secB:"",edB:"",emailB:"",estado:"Enviado",metodo:"Email",enviado:"2026-03-06",followup:"2026-04-20",link:"",notas:"Siguiente si no responden: Narratively",historial:"20/02/26 — CNT Firsts Travel, sin respuesta. 06/04/26 — AFAR Magazine, enviado."},
-  {id:2,titulo:"Steve Irwin through non-Australian eyes (Australian Edition)",revA:"ABC News Features",secA:"Features",edA:"",emailA:"features@abc.net.au",revB:"The Traveller Australia",secB:"",edB:"Anthony Dennis",emailB:"anthony.dennis@nine.com.au",estado:"Enviado",metodo:"Email",enviado:"2026-04-13",followup:"2026-04-20",link:"",notas:"Siguiente: Guardian Australia",historial:"31/03/26 — ABC News Features, enviado. 13/04/26 — The Traveller Australia (Anthony Dennis), enviado."},
-  {id:3,titulo:"Steve Irwin through a kid's eye (Global Edition)",revA:"BBC Opinion",secA:"",edA:"Rebecca Laurence",emailA:"rebecca.laurence@bbc.com",revB:"The Guardian Australian",secB:"",edB:"Bridie Jabour",emailB:"bridie.jabour@theguardian.com",estado:"Enviado",metodo:"Email",enviado:"2026-04-13",followup:"2026-04-20",link:"",notas:"",historial:"13/04/26 — BBC Opinion (Rebecca Laurence) y The Guardian Australian (Bridie Jabour), enviado."},
-  {id:4,titulo:"I Went To Paris Determined To Hate It",revA:"Condé Nast Traveler",secA:"Women Who Travel",edA:"Lale Arikoglu",emailA:"lale_arikoglu@condenast.com",revB:"",secB:"",edB:"",emailB:"",estado:"Enviado",metodo:"Email",enviado:"2026-03-06",followup:"2026-04-20",link:"",notas:"En follow up mencionar tono humorístico ligero. Siguiente: BBC Travel / AFAR",historial:""},
-  {id:5,titulo:"When World Events Decide Where You Belong",revA:"AFAR Magazine",secA:"",edA:"Katherine LaGrave",emailA:"klagrave@afar.com",revB:"",secB:"",edB:"",emailB:"",estado:"Listo",metodo:"Email",enviado:"2026-03-03",followup:"2026-04-20",link:"",notas:"",historial:"03/03/26 — AFAR Magazine: Sin respuesta."},
-  {id:6,titulo:"The Trip I Almost Dismissed",revA:"The Guardian Travel",secA:"Travel",edA:"",emailA:"travel@theguardian.com",revB:"",secB:"",edB:"",emailB:"",estado:"Listo",metodo:"Email",enviado:"2026-03-12",followup:"2026-04-14",link:"",notas:"",historial:"10/03/26 — BBC Travel (Ellie Cobb), rechazado. 12/03/26 — The Guardian Travel, enviado."},
-  {id:7,titulo:"In the Era of Reinvention, Why Do We Still Play Small?",revA:"The Guardian Opinion",secA:"Opinion",edA:"",emailA:"opinion@theguardian.com",revB:"",secB:"",edB:"",emailB:"",estado:"Listo",metodo:"Email",enviado:"2026-03-12",followup:"2026-04-14",link:"",notas:"",historial:"12/03/26 — The Guardian Opinion: Sin respuesta."},
-  {id:8,titulo:"What my hotel's kidnapping pamphlet didn't tell me about Johannesburg",revA:"BBC Travel",secA:"",edA:"Ellie Cobb",emailA:"ellie.cobb@bbc.com",revB:"",secB:"",edB:"",emailB:"",estado:"Listo",metodo:"Email",enviado:"",followup:"2026-04-22",link:"",notas:"Enviar el 22/04. Siguiente: AFAR / Guardian Travel / CNT",historial:""},
-  {id:9,titulo:"The Map That Suggested I Was Meant to Live in Australia",revA:"AFAR Magazine",secA:"",edA:"",emailA:"",revB:"",secB:"",edB:"",emailB:"",estado:"En proceso",metodo:"Email",enviado:"",followup:"",link:"",notas:"Siguiente: CNT Women Who Travel / The Guardian Travel / Travel + Leisure",historial:""},
-  {id:10,titulo:"Paris: wanna have dinner with me?",revA:"Condé Nast Traveler",secA:"Women Who Travel",edA:"",emailA:"",revB:"",secB:"",edB:"",emailB:"",estado:"En proceso",metodo:"Email",enviado:"",followup:"",link:"",notas:"Siguiente: AFAR Magazine",historial:""}
-];
-const DC=[{id:1,titulo:"Microrrelato (título pendiente)",concurso:"Concurso microrrelato",cat:"Microrrelato",estado:"En concurso",fallo:"2026-05-16",notas:"Draft listo, pulir antes del 16/04"}];
+const const SUPA_URL="https://owsanfynwpqcovygcpgh.supabase.co";
+const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93c2FuZnlud3BxY292eWdjcGdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczNDczMDksImV4cCI6MjA5MjkyMzMwOX0.8D7kmwcn4p6Ys1qHccWy0Ttr1jKsiwlWnlBAdlWJWns";
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
 
 let pitches=[],concursos=[],eid=null,ecid=null,fil='Todos';
 
-function loadData(){
-  try{const r=localStorage.getItem(SK);pitches=r?JSON.parse(r):JSON.parse(JSON.stringify(DP));}catch(e){pitches=JSON.parse(JSON.stringify(DP));}
-  try{const r=localStorage.getItem(CK);concursos=r?JSON.parse(r):JSON.parse(JSON.stringify(DC));}catch(e){concursos=JSON.parse(JSON.stringify(DC));}
-  render();
-  checkFallos();
-}
-function saveData(){
-  try{localStorage.setItem(SK,JSON.stringify(pitches));localStorage.setItem(CK,JSON.stringify(concursos));document.getElementById('si').textContent='✓ guardado';}
-  catch(e){document.getElementById('si').textContent='error al guardar';}
-}
+function setSyncStatus(s){const el=document.getElementById('si');if(!el)return;const cfg={syncing:{text:'⏳ guardando...',color:'#854D0E',bg:'#FEF9C3'},ok:{text:'✓ en la nube',color:'#2e9660',bg:'#edfff6'},error:{text:'⚠️ error',color:'#991B1B',bg:'#FEE2E2'}};const c=cfg[s]||cfg.ok;el.textContent=c.text;el.style.color=c.color;el.style.background=c.bg;el.style.padding='2px 8px';el.style.borderRadius='20px';}
 
-function checkFallos(){
-  const now=new Date();now.setHours(0,0,0,0);
-  const endOfWeek=new Date(now);endOfWeek.setDate(now.getDate()+7);
-  const upcoming=concursos.filter(c=>{
-    if(!c.fallo)return false;
-    const d=new Date(c.fallo);
-    return d>=now&&d<=endOfWeek;
-  });
-  if(!upcoming.length)return;
-  const banner=document.getElementById('alertBanner');
-  const body=document.getElementById('alertBody');
-  body.innerHTML=upcoming.map(c=>{
-    const d=new Date(c.fallo);
-    const days=Math.round((d-now)/86400000);
-    const ds=days===0?'hoy':days===1?'mañana':`en ${days} días`;
-    return`<div class="alert-item"><strong>${c.titulo}</strong> — ${c.concurso} · fallo <span class="alert-days">${ds}</span> (${fmt(c.fallo)})</div>`;
-  }).join('');
-  banner.classList.add('show');
-}
+async function loadData(){setSyncStatus('syncing');try{const[pr,cr]=await Promise.all([sb.from('pitch_pitches').select('*').order('id'),sb.from('pitch_concursos').select('*').order('id')]);pitches=pr.data||[];concursos=cr.data||[];setSyncStatus('ok');}catch(e){console.error(e);setSyncStatus('error');}render();checkFallos();}
+
+async function saveData(){setSyncStatus('syncing');try{await Promise.all([sb.from('pitch_pitches').upsert(pitches,{onConflict:'id'}),sb.from('pitch_concursos').upsert(concursos,{onConflict:'id'})]);setSyncStatus('ok');}catch(e){console.error(e);setSyncStatus('error');}}
+
+function checkFallos(){const now=new Date();now.setHours(0,0,0,0);const endOfWeek=new Date(now);endOfWeek.setDate(now.getDate()+7);const upcoming=concursos.filter(c=>{if(!c.fallo)return false;const d=new Date(c.fallo);return d>=now&&d<=endOfWeek;});if(!upcoming.length)return;const banner=document.getElementById('alertBanner');const body=document.getElementById('alertBody');body.innerHTML=upcoming.map(c=>{const d=new Date(c.fallo);const days=Math.round((d-now)/86400000);const ds=days===0?'hoy':days===1?'mañana':`en ${days} días`;return`<div class="alert-item"><strong>${c.titulo}</strong> — ${c.concurso} · fallo <span class="alert-days">${ds}</span> (${fmt(c.fallo)})</div>`;}).join('');banner.classList.add('show');}
 
 function td2(){return new Date().toISOString().split('T')[0];}
 function dd(d){if(!d)return null;const t=new Date();t.setHours(0,0,0,0);return Math.round((new Date(d)-t)/86400000);}
@@ -290,110 +256,29 @@ function badge(s){const m={Enviado:'b-env',Listo:'b-list','En proceso':'b-proc',
 function render(){rStats();rFechas();rTable();rConcursos();}
 
 let _sg=[];
-function rStats(){
-  const activos=pitches.filter(p=>['Enviado','Follow-up'].includes(p.estado));
-  const fu=pitches.filter(p=>{if(!p.followup)return false;const d=dd(p.followup);return d!==null&&d<=7&&d>=0&&p.estado==='Enviado';});
-  const listos=pitches.filter(p=>p.estado==='Listo');
-  const pubs=pitches.filter(p=>p.estado==='Publicado');
-  const uniqKeys=[...new Set(pitches.map(p=>p.titulo.split('(')[0].trim()))];
-  const uniqP=uniqKeys.map(k=>pitches.find(p=>p.titulo.startsWith(k)));
-  _sg=[
-    {label:'En circulación',items:[...activos,...concursos.map(c=>({titulo:c.titulo,revA:c.concurso,estado:c.estado}))]},
-    {label:'Follow-ups urgentes',items:fu},
-    {label:'Listos para enviar',items:listos},
-    {label:'Publicados',items:pubs},
-    {label:'Artículos únicos',items:uniqP}
-  ];
-  document.getElementById('sbar').innerHTML=_sg.map((g,i)=>`
-    <div class="stat" onclick="openStatModal(${i})">
-      <div class="stat-n">${g.items.length}</div>
-      <div class="stat-l">${g.label}</div>
-      <div class="stat-s">ver todos →</div>
-    </div>`).join('');
-}
+function rStats(){const activos=pitches.filter(p=>['Enviado','Follow-up'].includes(p.estado));const fu=pitches.filter(p=>{if(!p.followup)return false;const d=dd(p.followup);return d!==null&&d<=7&&d>=0&&p.estado==='Enviado';});const listos=pitches.filter(p=>p.estado==='Listo');const pubs=pitches.filter(p=>p.estado==='Publicado');const uniqKeys=[...new Set(pitches.map(p=>p.titulo.split('(')[0].trim()))];const uniqP=uniqKeys.map(k=>pitches.find(p=>p.titulo.startsWith(k)));_sg=[{label:'En circulación',items:[...activos,...concursos.map(c=>({titulo:c.titulo,reva:c.concurso,estado:c.estado}))]},{label:'Follow-ups urgentes',items:fu},{label:'Listos para enviar',items:listos},{label:'Publicados',items:pubs},{label:'Artículos únicos',items:uniqP}];document.getElementById('sbar').innerHTML=_sg.map((g,i)=>`<div class="stat" onclick="openStatModal(${i})"><div class="stat-n">${g.items.length}</div><div class="stat-l">${g.label}</div><div class="stat-s">ver todos →</div></div>`).join('');}
 
-function openStatModal(i){
-  const g=_sg[i];
-  document.getElementById('statModalTitle').textContent=g.label;
-  const body=document.getElementById('statModalBody');
-  if(!g.items.length){body.innerHTML=`<p style="font-size:10px;color:#999;padding:8px 0">No hay artículos en esta categoría.</p>`;}
-  else{body.innerHTML=g.items.map(p=>`<div class="sitem"><div class="sitem-t">${p.titulo}</div><div class="sitem-m">${p.revA||''}${p.revB?' · '+p.revB:''} ${badge(p.estado)}</div></div>`).join('');}
-  document.getElementById('statModal').classList.add('open');
-}
+function openStatModal(i){const g=_sg[i];document.getElementById('statModalTitle').textContent=g.label;const body=document.getElementById('statModalBody');if(!g.items.length){body.innerHTML=`<p style="font-size:10px;color:#999;padding:8px 0">No hay artículos en esta categoría.</p>`;}else{body.innerHTML=g.items.map(p=>`<div class="sitem"><div class="sitem-t">${p.titulo}</div><div class="sitem-m">${p.reva||''}${p.revb?' · '+p.revb:''} ${badge(p.estado)}</div></div>`).join('');}document.getElementById('statModal').classList.add('open');}
 function closeStatModal(){document.getElementById('statModal').classList.remove('open');}
 
-function rFechas(){
-  const up=pitches.filter(p=>p.followup).map(p=>({date:p.followup,days:dd(p.followup),titulo:p.titulo,pub:p.revA})).filter(x=>x.days!==null&&x.days<=14).sort((a,b)=>a.days-b.days).slice(0,6);
-  let h='<div class="fechas-h">Fechas clave próximas</div>';
-  up.forEach(x=>{const ds=x.days===0?'hoy':x.days<0?`hace ${-x.days}d`:`en ${x.days}d`;h+=`<div class="frow"><span class="fd">${fmt(x.date)}</span><span class="fd2${x.days<0?' late':''}">${ds}</span><span class="ft">${x.titulo}</span><span class="fp">— ${x.pub}</span></div>`;});
-  document.getElementById('fbox').innerHTML=h;
-}
+function rFechas(){const up=pitches.filter(p=>p.followup).map(p=>({date:p.followup,days:dd(p.followup),titulo:p.titulo,pub:p.reva})).filter(x=>x.days!==null&&x.days<=14).sort((a,b)=>a.days-b.days).slice(0,6);let h='<div class="fechas-h">Fechas clave próximas</div>';up.forEach(x=>{const ds=x.days===0?'hoy':x.days<0?`hace ${-x.days}d`:`en ${x.days}d`;h+=`<div class="frow"><span class="fd">${fmt(x.date)}</span><span class="fd2${x.days<0?' late':''}">${ds}</span><span class="ft">${x.titulo}</span><span class="fp">— ${x.pub}</span></div>`;});document.getElementById('fbox').innerHTML=h;}
 
-function rTable(){
-  const fs=['Todos','Enviados','Follow-up','Listos','En proceso','Publicados','Rechazados'];
-  document.getElementById('fbar').innerHTML=fs.map(f=>`<button class="fb${f===fil?' on':''}" onclick="setF('${f}')">${f}</button>`).join('');
-  let rows=pitches;
-  if(fil==='Enviados')rows=pitches.filter(p=>p.estado==='Enviado');
-  else if(fil==='Listos')rows=pitches.filter(p=>p.estado==='Listo');
-  else if(fil==='En proceso')rows=pitches.filter(p=>p.estado==='En proceso');
-  else if(fil==='Publicados')rows=pitches.filter(p=>p.estado==='Publicado');
-  else if(fil==='Follow-up')rows=pitches.filter(p=>p.estado==='Follow-up');
-  else if(fil==='Rechazados')rows=pitches.filter(p=>p.estado==='Rechazado');
-  document.getElementById('ptable').innerHTML=rows.map(p=>{
-    const fd=p.followup?dd(p.followup):null;
-    const fs2=p.followup?`${fmt(p.followup)}<br><span class="db${fd<0?' late':''}">${fd<0?`hace ${-fd}d`:fd===0?'hoy':`en ${fd}d`}</span>`:'';
-    let rv=`<div class="pn">${p.revA}</div>`;
-    if(p.secA)rv+=`<div class="ps">${p.secA}</div>`;
-    if(p.edA)rv+=`<div class="ps">${p.edA}</div>`;
-    if(p.emailA)rv+=`<div class="ps">${p.emailA}</div>`;
-    if(p.revB){rv+=`<div style="margin-top:4px"><div class="pn">${p.revB}</div>`;if(p.edB)rv+=`<div class="ps">${p.edB}</div>`;if(p.emailB)rv+=`<div class="ps">${p.emailB}</div></div>`;}
-    return`<tr>
-      <td class="ca" style="font-weight:500">${p.titulo}</td>
-      <td class="cr">${rv}</td><td class="cs">${badge(p.estado)}</td>
-      <td class="ce" style="color:#888">${fmt(p.enviado)}</td>
-      <td class="cf">${fs2}</td>
-      <td class="cn"><div class="nt">${p.notas||''}</div>${p.historial?`<div class="nh">${p.historial}</div>`:''}</td>
-      <td class="cx"><div class="ract">
-        <button class="ib" onclick="editP(${p.id})">Editar</button>
-        <button class="ib" onclick="delP(${p.id})">×</button>
-      </div></td></tr>`;
-  }).join('');
-}
+function rTable(){const fs=['Todos','Enviados','Follow-up','Listos','En proceso','Publicados','Rechazados'];document.getElementById('fbar').innerHTML=fs.map(f=>`<button class="fb${f===fil?' on':''}" onclick="setF('${f}')">${f}</button>`).join('');let rows=pitches;if(fil==='Enviados')rows=pitches.filter(p=>p.estado==='Enviado');else if(fil==='Listos')rows=pitches.filter(p=>p.estado==='Listo');else if(fil==='En proceso')rows=pitches.filter(p=>p.estado==='En proceso');else if(fil==='Publicados')rows=pitches.filter(p=>p.estado==='Publicado');else if(fil==='Follow-up')rows=pitches.filter(p=>p.estado==='Follow-up');else if(fil==='Rechazados')rows=pitches.filter(p=>p.estado==='Rechazado');document.getElementById('ptable').innerHTML=rows.map(p=>{const fd=p.followup?dd(p.followup):null;const fs2=p.followup?`${fmt(p.followup)}<br><span class="db${fd<0?' late':''}">${fd<0?`hace ${-fd}d`:fd===0?'hoy':`en ${fd}d`}</span>`:'';let rv=`<div class="pn">${p.reva||''}</div>`;if(p.seca)rv+=`<div class="ps">${p.seca}</div>`;if(p.eda)rv+=`<div class="ps">${p.eda}</div>`;if(p.emaila)rv+=`<div class="ps">${p.emaila}</div>`;if(p.revb){rv+=`<div style="margin-top:4px"><div class="pn">${p.revb}</div>`;if(p.edb)rv+=`<div class="ps">${p.edb}</div>`;if(p.emailb)rv+=`<div class="ps">${p.emailb}</div></div>`;}return`<tr><td class="ca" style="font-weight:500">${p.titulo}</td><td class="cr">${rv}</td><td class="cs">${badge(p.estado)}</td><td class="ce" style="color:#888">${fmt(p.enviado)}</td><td class="cf">${fs2}</td><td class="cn"><div class="nt">${p.notas||''}</div>${p.historial?`<div class="nh">${p.historial}</div>`:''}</td><td class="cx"><div class="ract"><button class="ib" onclick="editP(${p.id})">Editar</button><button class="ib" onclick="delP(${p.id})">×</button></div></td></tr>`;}).join('');}
 
-function rConcursos(){
-  document.getElementById('clist').innerHTML=concursos.map(c=>{
-    const d=c.fallo?dd(c.fallo):null;
-    const ds=d!==null?(d<0?`Falló hace ${-d}d`:`Fallo en ${d}d: ${fmt(c.fallo)}`):'';
-    const urgent=d!==null&&d>=0&&d<=7;
-    return`<div class="ccard" style="${urgent?'border-color:var(--pk3);background:var(--pk0);':''}">
-      <div class="ct">${c.titulo}</div><div class="cp">${c.concurso}</div><div class="ccat">${c.cat}</div>
-      ${c.notas?`<div class="cnote">${c.notas}</div>`:''}
-      <div class="cfoot"><span class="badge b-env">${c.estado}</span>
-        <div style="display:flex;gap:4px;align-items:center">
-          <span class="cfallo" style="${urgent?'color:var(--pk4);font-weight:500;':''}">${ds}</span>
-          <button class="ib" onclick="editC(${c.id})">Editar</button>
-          <button class="ib" onclick="delC(${c.id})">×</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
+function rConcursos(){document.getElementById('clist').innerHTML=concursos.map(c=>{const d=c.fallo?dd(c.fallo):null;const ds=d!==null?(d<0?`Falló hace ${-d}d`:`Fallo en ${d}d: ${fmt(c.fallo)}`):'';const urgent=d!==null&&d>=0&&d<=7;return`<div class="ccard" style="${urgent?'border-color:var(--pk3);background:var(--pk0);':''}"><div class="ct">${c.titulo}</div><div class="cp">${c.concurso}</div><div class="ccat">${c.cat}</div>${c.notas?`<div class="cnote">${c.notas}</div>`:''}<div class="cfoot"><span class="badge b-env">${c.estado}</span><div style="display:flex;gap:4px;align-items:center"><span class="cfallo" style="${urgent?'color:var(--pk4);font-weight:500;':''}">${ds}</span><button class="ib" onclick="editC(${c.id})">Editar</button><button class="ib" onclick="delC(${c.id})">×</button></div></div></div>`;}).join('');}
 
 function setF(f){fil=f;rTable();}
 function swTab(t,el){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));el.classList.add('active');document.getElementById('pitchesTab').style.display=t==='pitches'?'':'none';document.getElementById('concursosTab').style.display=t==='concursos'?'':'none';document.getElementById('newBtn').textContent=t==='pitches'?'+ Nuevo pitch':'+ Nuevo concurso';document.getElementById('newBtn').onclick=t==='pitches'?openNewModal:openNewConcursoModal;}
-function openNewModal(){eid=null;document.getElementById('mT').textContent='Nuevo pitch';['titulo','revA','secA','edA','emailA','revB','secB','edB','emailB','link','notas','historial'].forEach(f=>document.getElementById('f-'+f).value='');document.getElementById('f-metodo').value='Email';document.getElementById('f-estado').value='Listo';document.getElementById('f-enviado').value='';document.getElementById('f-followup').value='';document.getElementById('pitchModal').classList.add('open');}
-function editP(id){const p=pitches.find(x=>x.id===id);if(!p)return;eid=id;document.getElementById('mT').textContent='Editar pitch';['titulo','revA','secA','edA','emailA','revB','secB','edB','emailB','metodo','link','notas','historial'].forEach(f=>document.getElementById('f-'+f).value=p[f]||'');document.getElementById('f-estado').value=p.estado;document.getElementById('f-enviado').value=p.enviado||'';document.getElementById('f-followup').value=p.followup||'';document.getElementById('pitchModal').classList.add('open');}
-function savePitch(){const p={id:eid||Date.now(),titulo:document.getElementById('f-titulo').value,revA:document.getElementById('f-revA').value,secA:document.getElementById('f-secA').value,edA:document.getElementById('f-edA').value,emailA:document.getElementById('f-emailA').value,revB:document.getElementById('f-revB').value,secB:document.getElementById('f-secB').value,edB:document.getElementById('f-edB').value,emailB:document.getElementById('f-emailB').value,estado:document.getElementById('f-estado').value,metodo:document.getElementById('f-metodo').value,enviado:document.getElementById('f-enviado').value,followup:document.getElementById('f-followup').value,link:document.getElementById('f-link').value,notas:document.getElementById('f-notas').value,historial:document.getElementById('f-historial').value};if(eid){const i=pitches.findIndex(x=>x.id===eid);pitches[i]=p;}else pitches.push(p);closeModal();saveData();render();}
-function delP(id){if(!confirm('¿Eliminar?'))return;pitches=pitches.filter(p=>p.id!==id);saveData();render();}
+function openNewModal(){eid=null;document.getElementById('mT').textContent='Nuevo pitch';['titulo','reva','seca','eda','emaila','revb','secb','edb','emailb','link','notas','historial'].forEach(f=>document.getElementById('f-'+f).value='');document.getElementById('f-metodo').value='Email';document.getElementById('f-estado').value='Listo';document.getElementById('f-enviado').value='';document.getElementById('f-followup').value='';document.getElementById('pitchModal').classList.add('open');}
+function editP(id){const p=pitches.find(x=>x.id===id);if(!p)return;eid=id;document.getElementById('mT').textContent='Editar pitch';document.getElementById('f-titulo').value=p.titulo||'';document.getElementById('f-reva').value=p.reva||'';document.getElementById('f-seca').value=p.seca||'';document.getElementById('f-eda').value=p.eda||'';document.getElementById('f-emaila').value=p.emaila||'';document.getElementById('f-revb').value=p.revb||'';document.getElementById('f-secb').value=p.secb||'';document.getElementById('f-edb').value=p.edb||'';document.getElementById('f-emailb').value=p.emailb||'';document.getElementById('f-metodo').value=p.metodo||'Email';document.getElementById('f-link').value=p.link||'';document.getElementById('f-notas').value=p.notas||'';document.getElementById('f-historial').value=p.historial||'';document.getElementById('f-estado').value=p.estado||'Listo';document.getElementById('f-enviado').value=p.enviado||'';document.getElementById('f-followup').value=p.followup||'';document.getElementById('pitchModal').classList.add('open');}
+function savePitch(){const p={id:eid||Date.now(),titulo:document.getElementById('f-titulo').value,reva:document.getElementById('f-reva').value,seca:document.getElementById('f-seca').value,eda:document.getElementById('f-eda').value,emaila:document.getElementById('f-emaila').value,revb:document.getElementById('f-revb').value,secb:document.getElementById('f-secb').value,edb:document.getElementById('f-edb').value,emailb:document.getElementById('f-emailb').value,estado:document.getElementById('f-estado').value,metodo:document.getElementById('f-metodo').value,enviado:document.getElementById('f-enviado').value,followup:document.getElementById('f-followup').value,link:document.getElementById('f-link').value,notas:document.getElementById('f-notas').value,historial:document.getElementById('f-historial').value};if(eid){const i=pitches.findIndex(x=>x.id===eid);pitches[i]=p;}else pitches.push(p);closeModal();saveData();render();}
+async function delP(id){if(!confirm('¿Eliminar?'))return;pitches=pitches.filter(p=>p.id!==id);await sb.from('pitch_pitches').delete().eq('id',id);render();}
 function closeModal(){document.getElementById('pitchModal').classList.remove('open');}
 function openNewConcursoModal(){ecid=null;document.getElementById('cmT').textContent='Nuevo concurso';['titulo','concurso','cat','notas'].forEach(f=>document.getElementById('c-'+f).value='');document.getElementById('c-estado').value='En concurso';document.getElementById('c-fallo').value='';document.getElementById('concursoModal').classList.add('open');}
 function editC(id){const c=concursos.find(x=>x.id===id);if(!c)return;ecid=id;document.getElementById('cmT').textContent='Editar concurso';['titulo','concurso','cat','notas'].forEach(f=>document.getElementById('c-'+f).value=c[f]||'');document.getElementById('c-estado').value=c.estado;document.getElementById('c-fallo').value=c.fallo||'';document.getElementById('concursoModal').classList.add('open');}
 function saveConcurso(){const c={id:ecid||Date.now(),titulo:document.getElementById('c-titulo').value,concurso:document.getElementById('c-concurso').value,cat:document.getElementById('c-cat').value,estado:document.getElementById('c-estado').value,fallo:document.getElementById('c-fallo').value,notas:document.getElementById('c-notas').value};if(ecid){const i=concursos.findIndex(x=>x.id===ecid);concursos[i]=c;}else concursos.push(c);closeConcursoModal();saveData();render();}
-function delC(id){if(!confirm('¿Eliminar?'))return;concursos=concursos.filter(c=>c.id!==id);saveData();render();}
+async function delC(id){if(!confirm('¿Eliminar?'))return;concursos=concursos.filter(c=>c.id!==id);await sb.from('pitch_concursos').delete().eq('id',id);render();}
 function closeConcursoModal(){document.getElementById('concursoModal').classList.remove('open');}
-function exportCSV(){const h=['Título','Revista A','Sección A','Editor A','Email A','Revista B','Sección B','Editor B','Email B','Estado','Método','Enviado','Follow-up','Link','Notas','Historial'];const r=pitches.map(p=>[p.titulo,p.revA,p.secA,p.edA,p.emailA,p.revB,p.secB,p.edB,p.emailB,p.estado,p.metodo,p.enviado,p.followup,p.link,p.notas,p.historial].map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(','));const csv=[h.join(','),...r].join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download=`pitch_tracker_${td2()}.csv`;a.click();}
+function exportCSV(){const h=['Título','Revista A','Sección A','Editor A','Email A','Revista B','Sección B','Editor B','Email B','Estado','Método','Enviado','Follow-up','Link','Notas','Historial'];const r=pitches.map(p=>[p.titulo,p.reva,p.seca,p.eda,p.emaila,p.revb,p.secb,p.edb,p.emailb,p.estado,p.metodo,p.enviado,p.followup,p.link,p.notas,p.historial].map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(','));const csv=[h.join(','),...r].join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download=`pitch_tracker_${td2()}.csv`;a.click();}
 
 loadData();
-</script>
-</body>
-</html>
