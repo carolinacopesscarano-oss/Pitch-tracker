@@ -3,92 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <title>pitch tracker</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --pk0:#fff3f7;--pk1:#ffdcea;--pk2:#ffb8d4;--pk3:#ff80b0;--pk4:#e8407a;--pk5:#c0005a;
-  --tx:#111111;--txs:#666666;--txm:#aaaaaa;--bg:#ffffff;
-}
+:root{--pk0:#fff3f7;--pk1:#ffdcea;--pk2:#ffb8d4;--pk3:#ff80b0;--pk4:#e8407a;--pk5:#c0005a;--tx:#111111;--txs:#666666;--txm:#aaaaaa;--bg:#ffffff;}
 html,body{min-height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:12px;}
 .app{max-width:1200px;margin:0 auto;padding:1.4rem 2rem;}
-
-/* header */
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;padding-bottom:.9rem;border-bottom:0.5px solid var(--pk1);}
 .logo{font-size:15px;font-weight:300;letter-spacing:0.5px;color:var(--tx);}
-.logo em{font-style:italic;font-weight:700;letter-spacing:0.5px;background:linear-gradient(90deg,#e8407a 0%,#e8407a 30%,#ffb8d4 48%,#fff0f7 52%,#ffb8d4 56%,#e8407a 70%,#e8407a 100%);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 3s ease-in-out infinite;}
+.logo em{font-style:italic;font-weight:700;background:linear-gradient(90deg,#e8407a 0%,#e8407a 30%,#ffb8d4 48%,#fff0f7 52%,#ffb8d4 56%,#e8407a 70%,#e8407a 100%);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 3s ease-in-out infinite;}
 @keyframes shimmer{0%{background-position:100% 0}60%{background-position:-100% 0}100%{background-position:-100% 0}}
 .hbtns{display:flex;gap:5px;align-items:center;}
-.saveok{font-size:10px;color:var(--txm);margin-right:2px;}
+.sync{font-size:10px;padding:2px 8px;border-radius:20px;margin-right:4px;}
 .btn{font-size:10px;padding:4px 11px;border-radius:3px;border:0.5px solid var(--pk2);background:transparent;color:var(--txs);cursor:pointer;font-family:'DM Sans',sans-serif;}
 .btn:hover{background:var(--pk0);color:var(--tx);}
 .btn-p{color:var(--pk4);border-color:var(--pk3);}
 .btn-p:hover{background:var(--pk0);}
-
-/* tabs */
 .tabs{display:flex;margin-bottom:1.2rem;border-bottom:0.5px solid var(--pk1);}
 .tab{font-size:11px;padding:6px 14px;cursor:pointer;color:var(--txs);border-bottom:1.5px solid transparent;margin-bottom:-0.5px;}
 .tab.active{color:var(--tx);border-bottom-color:var(--pk4);}
-
-/* stats */
 .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:1.2rem;}
 .stat{background:var(--pk0);border-radius:7px;padding:10px 13px;border:0.5px solid var(--pk2);cursor:pointer;transition:border-color .15s,background .15s;}
 .stat:hover{border-color:var(--pk3);background:var(--pk1);}
 .stat-n{font-size:24px;font-weight:300;color:var(--tx);line-height:1.1;}
 .stat-l{font-size:10px;color:var(--txs);margin-top:3px;}
 .stat-s{font-size:10px;color:var(--pk3);margin-top:1px;}
- 
-/* fechas */
 .fechas{background:var(--pk0);border-radius:7px;padding:10px 14px;margin-bottom:1.2rem;border:0.5px solid var(--pk2);}
 .fechas-h{font-size:9px;font-weight:500;color:var(--txs);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;}
 .frow{display:flex;gap:10px;align-items:baseline;padding:2.5px 0;}
 .fd,.fd2,.ft,.fp{font-size:10px;}
 .fd{color:var(--txs);min-width:58px;}.fd2{color:var(--txs);min-width:38px;}.ft{color:var(--tx);flex:1;}.fp{color:var(--txs);}
 .late{color:#cc2244;font-weight:500;}
-
-/* filters */
 .filters{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:1rem;}
 .fb{font-size:10px;padding:3px 10px;border-radius:3px;border:0.5px solid var(--pk2);background:transparent;color:var(--txs);cursor:pointer;font-family:'DM Sans',sans-serif;}
 .fb.on{background:var(--pk4);color:#fff;border-color:var(--pk4);}
 .fb:hover:not(.on){background:var(--pk0);color:var(--tx);}
-
-/* table */
 table{width:100%;border-collapse:collapse;table-layout:fixed;}
 th{font-size:9px;font-weight:500;color:var(--txs);text-transform:uppercase;letter-spacing:0.7px;padding:6px 8px;border-bottom:0.5px solid var(--pk1);text-align:left;}
 td{padding:8px 8px;border-bottom:0.5px solid var(--pk0);vertical-align:top;font-size:10px;color:var(--tx);}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:var(--pk0);}
 .ca{width:18%;}.cr{width:18%;}.cs{width:9%;}.ce{width:8%;}.cf{width:9%;}.cn{width:26%;}.cx{width:12%;}
-
-/* badges — colores por estado */
 .badge{display:inline-block;font-size:9px;padding:2px 7px;border-radius:3px;font-weight:400;}
-.b-env{background:#ffd6e7;color:#7a0030;}         /* rosa — enviado */
-.b-list{background:#d6f0e7;color:#005a30;}         /* verde suave — listo */
-.b-proc{background:#fff0cc;color:#665500;}         /* amarillo suave — en proceso */
-.b-pub{background:#cce8ff;color:#003870;}          /* azul suave — publicado */
-.b-fup{background:#e8d6ff;color:#3d007a;}          /* lavanda — follow-up */
-.b-rec{background:#f0d6d6;color:#6b0000;}          /* rojo suave — rechazado */
-
+.b-env{background:#ffd6e7;color:#7a0030;}
+.b-list{background:#d6f0e7;color:#005a30;}
+.b-proc{background:#fff0cc;color:#665500;}
+.b-pub{background:#cce8ff;color:#003870;}
+.b-fup{background:#e8d6ff;color:#3d007a;}
+.b-rec{background:#f0d6d6;color:#6b0000;}
 .pn{font-weight:500;font-size:10px;color:var(--tx);}
 .ps{font-size:10px;color:var(--txs);}
 .nt,.nh{font-size:10px;color:var(--tx);}
 .nh{margin-top:3px;padding-top:3px;border-top:0.5px solid var(--pk1);}
 .db{font-size:10px;color:var(--txs);}
-
 .ract{display:flex;gap:3px;}
 .ib{font-size:10px;padding:2px 7px;border-radius:3px;border:0.5px solid var(--pk2);background:transparent;cursor:pointer;color:var(--txs);font-family:'DM Sans',sans-serif;}
 .ib:hover{background:var(--pk0);border-color:var(--pk3);color:var(--tx);}
-
-/* alert banner */
 .alert-banner{background:#fff0f5;border:0.5px solid var(--pk3);border-radius:7px;padding:10px 14px;margin-bottom:1.2rem;display:none;}
 .alert-banner.show{display:block;}
 .alert-title{font-size:10px;font-weight:500;color:var(--pk5);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;}
 .alert-item{font-size:10px;color:var(--tx);padding:2px 0;}
 .alert-days{color:var(--pk4);font-weight:500;}
-
-/* modals */
 .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(180,0,80,.15);z-index:100;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
 .modal{background:#fff;border-radius:10px;border:0.5px solid var(--pk2);padding:1.5rem;width:90%;max-width:640px;max-height:90vh;overflow-y:auto;}
@@ -102,8 +79,6 @@ tr:hover td{background:var(--pk0);}
 .fgr textarea{min-height:52px;resize:vertical;}
 .sdiv{font-size:9px;font-weight:500;color:var(--txs);text-transform:uppercase;letter-spacing:0.7px;grid-column:1/-1;margin-top:6px;padding-top:8px;border-top:0.5px solid var(--pk1);}
 .mfoot{display:flex;justify-content:flex-end;gap:5px;margin-top:1.1rem;}
-
-/* stat detail modal */
 .stat-modal{background:#fff;border-radius:10px;border:0.5px solid var(--pk2);padding:1.4rem;width:90%;max-width:520px;max-height:80vh;overflow-y:auto;}
 .stat-modal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem;}
 .stat-modal-hdr h3{font-size:13px;font-weight:400;color:var(--tx);}
@@ -111,8 +86,6 @@ tr:hover td{background:var(--pk0);}
 .sitem:last-child{border-bottom:none;}
 .sitem-t{font-size:10px;font-weight:500;color:var(--tx);margin-bottom:2px;}
 .sitem-m{font-size:10px;color:var(--txs);display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
-
-/* concurso cards */
 .ccard{background:#fff;border:0.5px solid var(--pk2);border-radius:7px;padding:.85rem 1rem;margin-bottom:8px;max-width:270px;}
 .ccard:hover{border-color:var(--pk3);}
 .ct{font-size:11px;font-weight:500;color:var(--tx);}
@@ -128,17 +101,15 @@ tr:hover td{background:var(--pk0);}
   <div class="header">
     <div class="logo">pitch <em>tracker</em></div>
     <div class="hbtns">
-      <span class="saveok" id="si">✓ guardado</span>
+      <span class="sync" id="si" style="background:#edfff6;color:#2e9660">✓ en la nube</span>
       <button class="btn" onclick="exportCSV()">Exportar CSV</button>
       <button class="btn btn-p" id="newBtn" onclick="openNewModal()">+ Nuevo pitch</button>
     </div>
   </div>
-
   <div class="tabs">
     <div class="tab active" onclick="swTab('pitches',this)">Pitches</div>
     <div class="tab" onclick="swTab('concursos',this)">Concursos</div>
   </div>
-
   <div id="pitchesTab">
     <div class="alert-banner" id="alertBanner">
       <div class="alert-title">Fallos de concursos esta semana</div>
@@ -157,7 +128,6 @@ tr:hover td{background:var(--pk0);}
       <tbody id="ptable"></tbody>
     </table>
   </div>
-
   <div id="concursosTab" style="display:none">
     <div style="display:flex;justify-content:flex-end;margin-bottom:.8rem;">
       <button class="btn btn-p" onclick="openNewConcursoModal()">+ Nuevo concurso</button>
@@ -165,19 +135,12 @@ tr:hover td{background:var(--pk0);}
     <div id="clist"></div>
   </div>
 </div>
-
-<!-- stat detail modal -->
 <div class="modal-overlay" id="statModal">
   <div class="stat-modal">
-    <div class="stat-modal-hdr">
-      <h3 id="statModalTitle"></h3>
-      <button class="ib" onclick="closeStatModal()">×</button>
-    </div>
+    <div class="stat-modal-hdr"><h3 id="statModalTitle"></h3><button class="ib" onclick="closeStatModal()">×</button></div>
     <div id="statModalBody"></div>
   </div>
 </div>
-
-<!-- pitch modal -->
 <div class="modal-overlay" id="pitchModal">
   <div class="modal">
     <h3 id="mT">Nuevo pitch</h3>
@@ -195,10 +158,7 @@ tr:hover td{background:var(--pk0);}
       <div class="fgr"><label>Email</label><input id="f-emailb" type="email"></div>
       <div class="sdiv">Envío</div>
       <div class="fgr"><label>Estado</label>
-        <select id="f-estado">
-          <option>Listo</option><option>Enviado</option><option>Follow-up</option>
-          <option>En proceso</option><option>Publicado</option><option>Rechazado</option>
-        </select>
+        <select id="f-estado"><option>Listo</option><option>Enviado</option><option>Follow-up</option><option>En proceso</option><option>Publicado</option><option>Rechazado</option></select>
       </div>
       <div class="fgr"><label>Método</label><input id="f-metodo" type="text" value="Email"></div>
       <div class="fgr"><label>Fecha enviado</label><input id="f-enviado" type="date"></div>
@@ -213,8 +173,6 @@ tr:hover td{background:var(--pk0);}
     </div>
   </div>
 </div>
-
-<!-- concurso modal -->
 <div class="modal-overlay" id="concursoModal">
   <div class="modal">
     <h3 id="cmT">Nuevo concurso</h3>
@@ -234,44 +192,31 @@ tr:hover td{background:var(--pk0);}
     </div>
   </div>
 </div>
-
 <script>
 const SUPA_URL="https://owsanfynwpqcovygcpgh.supabase.co";
 const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93c2FuZnlud3BxY292eWdjcGdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczNDczMDksImV4cCI6MjA5MjkyMzMwOX0.8D7kmwcn4p6Ys1qHccWy0Ttr1jKsiwlWnlBAdlWJWns";
-const sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
-
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
 let pitches=[],concursos=[],eid=null,ecid=null,fil='Todos';
-
-function setSyncStatus(s){const el=document.getElementById('si');if(!el)return;const cfg={syncing:{text:'⏳ guardando...',color:'#854D0E',bg:'#FEF9C3'},ok:{text:'✓ en la nube',color:'#2e9660',bg:'#edfff6'},error:{text:'⚠️ error',color:'#991B1B',bg:'#FEE2E2'}};const c=cfg[s]||cfg.ok;el.textContent=c.text;el.style.color=c.color;el.style.background=c.bg;el.style.padding='2px 8px';el.style.borderRadius='20px';}
-
-async function loadData(){setSyncStatus('syncing');try{const[pr,cr]=await Promise.all([sb.from('pitch_pitches').select('*').order('id'),sb.from('pitch_concursos').select('*').order('id')]);pitches=pr.data||[];concursos=cr.data||[];setSyncStatus('ok');}catch(e){console.error(e);setSyncStatus('error');}render();checkFallos();}
-
-async function saveData(){setSyncStatus('syncing');try{await Promise.all([sb.from('pitch_pitches').upsert(pitches,{onConflict:'id'}),sb.from('pitch_concursos').upsert(concursos,{onConflict:'id'})]);setSyncStatus('ok');}catch(e){console.error(e);setSyncStatus('error');}}
-
-function checkFallos(){const now=new Date();now.setHours(0,0,0,0);const endOfWeek=new Date(now);endOfWeek.setDate(now.getDate()+7);const upcoming=concursos.filter(c=>{if(!c.fallo)return false;const d=new Date(c.fallo);return d>=now&&d<=endOfWeek;});if(!upcoming.length)return;const banner=document.getElementById('alertBanner');const body=document.getElementById('alertBody');body.innerHTML=upcoming.map(c=>{const d=new Date(c.fallo);const days=Math.round((d-now)/86400000);const ds=days===0?'hoy':days===1?'mañana':`en ${days} días`;return`<div class="alert-item"><strong>${c.titulo}</strong> — ${c.concurso} · fallo <span class="alert-days">${ds}</span> (${fmt(c.fallo)})</div>`;}).join('');banner.classList.add('show');}
-
+function setSS(s){const el=document.getElementById('si');if(!el)return;const c={syncing:{t:'⏳ guardando...',c:'#854D0E',b:'#FEF9C3'},ok:{t:'✓ en la nube',c:'#2e9660',b:'#edfff6'},error:{t:'⚠️ error',c:'#991B1B',b:'#FEE2E2'}}[s]||{t:'✓ en la nube',c:'#2e9660',b:'#edfff6'};el.textContent=c.t;el.style.color=c.c;el.style.background=c.b;}
+async function loadData(){setSS('syncing');try{const[pr,cr]=await Promise.all([sb.from('pitch_pitches').select('*').order('id'),sb.from('pitch_concursos').select('*').order('id')]);pitches=pr.data||[];concursos=cr.data||[];setSS('ok');}catch(e){console.error(e);setSS('error');}render();checkFallos();}
+async function saveData(){setSS('syncing');try{await Promise.all([sb.from('pitch_pitches').upsert(pitches,{onConflict:'id'}),sb.from('pitch_concursos').upsert(concursos,{onConflict:'id'})]);setSS('ok');}catch(e){console.error(e);setSS('error');}}
+function checkFallos(){const now=new Date();now.setHours(0,0,0,0);const ew=new Date(now);ew.setDate(now.getDate()+7);const up=concursos.filter(c=>{if(!c.fallo)return false;const d=new Date(c.fallo);return d>=now&&d<=ew;});if(!up.length)return;document.getElementById('alertBody').innerHTML=up.map(c=>{const d=new Date(c.fallo);const days=Math.round((d-now)/86400000);const ds=days===0?'hoy':days===1?'mañana':`en ${days} días`;return`<div class="alert-item"><strong>${c.titulo}</strong> — ${c.concurso} · fallo <span class="alert-days">${ds}</span> (${fmt(c.fallo)})</div>`;}).join('');document.getElementById('alertBanner').classList.add('show');}
 function td2(){return new Date().toISOString().split('T')[0];}
 function dd(d){if(!d)return null;const t=new Date();t.setHours(0,0,0,0);return Math.round((new Date(d)-t)/86400000);}
 function fmt(d){if(!d)return'';const[y,m,dy]=d.split('-');return`${dy}/${m}/${y.slice(2)}`;}
 function badge(s){const m={Enviado:'b-env',Listo:'b-list','En proceso':'b-proc',Publicado:'b-pub','Follow-up':'b-fup',Rechazado:'b-rec'};return`<span class="badge ${m[s]||'b-list'}">${s}</span>`;}
 function render(){rStats();rFechas();rTable();rConcursos();}
-
 let _sg=[];
-function rStats(){const activos=pitches.filter(p=>['Enviado','Follow-up'].includes(p.estado));const fu=pitches.filter(p=>{if(!p.followup)return false;const d=dd(p.followup);return d!==null&&d<=7&&d>=0&&p.estado==='Enviado';});const listos=pitches.filter(p=>p.estado==='Listo');const pubs=pitches.filter(p=>p.estado==='Publicado');const uniqKeys=[...new Set(pitches.map(p=>p.titulo.split('(')[0].trim()))];const uniqP=uniqKeys.map(k=>pitches.find(p=>p.titulo.startsWith(k)));_sg=[{label:'En circulación',items:[...activos,...concursos.map(c=>({titulo:c.titulo,reva:c.concurso,estado:c.estado}))]},{label:'Follow-ups urgentes',items:fu},{label:'Listos para enviar',items:listos},{label:'Publicados',items:pubs},{label:'Artículos únicos',items:uniqP}];document.getElementById('sbar').innerHTML=_sg.map((g,i)=>`<div class="stat" onclick="openStatModal(${i})"><div class="stat-n">${g.items.length}</div><div class="stat-l">${g.label}</div><div class="stat-s">ver todos →</div></div>`).join('');}
-
-function openStatModal(i){const g=_sg[i];document.getElementById('statModalTitle').textContent=g.label;const body=document.getElementById('statModalBody');if(!g.items.length){body.innerHTML=`<p style="font-size:10px;color:#999;padding:8px 0">No hay artículos en esta categoría.</p>`;}else{body.innerHTML=g.items.map(p=>`<div class="sitem"><div class="sitem-t">${p.titulo}</div><div class="sitem-m">${p.reva||''}${p.revb?' · '+p.revb:''} ${badge(p.estado)}</div></div>`).join('');}document.getElementById('statModal').classList.add('open');}
+function rStats(){const activos=pitches.filter(p=>['Enviado','Follow-up'].includes(p.estado));const fu=pitches.filter(p=>{if(!p.followup)return false;const d=dd(p.followup);return d!==null&&d<=7&&d>=0&&p.estado==='Enviado';});const listos=pitches.filter(p=>p.estado==='Listo');const pubs=pitches.filter(p=>p.estado==='Publicado');const uq=[...new Set(pitches.map(p=>p.titulo.split('(')[0].trim()))].map(k=>pitches.find(p=>p.titulo.startsWith(k)));_sg=[{label:'En circulación',items:[...activos,...concursos.map(c=>({titulo:c.titulo,reva:c.concurso,estado:c.estado}))]},{label:'Follow-ups urgentes',items:fu},{label:'Listos para enviar',items:listos},{label:'Publicados',items:pubs},{label:'Artículos únicos',items:uq}];document.getElementById('sbar').innerHTML=_sg.map((g,i)=>`<div class="stat" onclick="openStatModal(${i})"><div class="stat-n">${g.items.length}</div><div class="stat-l">${g.label}</div><div class="stat-s">ver todos →</div></div>`).join('');}
+function openStatModal(i){const g=_sg[i];document.getElementById('statModalTitle').textContent=g.label;const body=document.getElementById('statModalBody');body.innerHTML=g.items.length?g.items.map(p=>`<div class="sitem"><div class="sitem-t">${p.titulo}</div><div class="sitem-m">${p.reva||''}${p.revb?' · '+p.revb:''} ${badge(p.estado)}</div></div>`).join(''):`<p style="font-size:10px;color:#999;padding:8px 0">No hay artículos.</p>`;document.getElementById('statModal').classList.add('open');}
 function closeStatModal(){document.getElementById('statModal').classList.remove('open');}
-
 function rFechas(){const up=pitches.filter(p=>p.followup).map(p=>({date:p.followup,days:dd(p.followup),titulo:p.titulo,pub:p.reva})).filter(x=>x.days!==null&&x.days<=14).sort((a,b)=>a.days-b.days).slice(0,6);let h='<div class="fechas-h">Fechas clave próximas</div>';up.forEach(x=>{const ds=x.days===0?'hoy':x.days<0?`hace ${-x.days}d`:`en ${x.days}d`;h+=`<div class="frow"><span class="fd">${fmt(x.date)}</span><span class="fd2${x.days<0?' late':''}">${ds}</span><span class="ft">${x.titulo}</span><span class="fp">— ${x.pub}</span></div>`;});document.getElementById('fbox').innerHTML=h;}
-
-function rTable(){const fs=['Todos','Enviados','Follow-up','Listos','En proceso','Publicados','Rechazados'];document.getElementById('fbar').innerHTML=fs.map(f=>`<button class="fb${f===fil?' on':''}" onclick="setF('${f}')">${f}</button>`).join('');let rows=pitches;if(fil==='Enviados')rows=pitches.filter(p=>p.estado==='Enviado');else if(fil==='Listos')rows=pitches.filter(p=>p.estado==='Listo');else if(fil==='En proceso')rows=pitches.filter(p=>p.estado==='En proceso');else if(fil==='Publicados')rows=pitches.filter(p=>p.estado==='Publicado');else if(fil==='Follow-up')rows=pitches.filter(p=>p.estado==='Follow-up');else if(fil==='Rechazados')rows=pitches.filter(p=>p.estado==='Rechazado');document.getElementById('ptable').innerHTML=rows.map(p=>{const fd=p.followup?dd(p.followup):null;const fs2=p.followup?`${fmt(p.followup)}<br><span class="db${fd<0?' late':''}">${fd<0?`hace ${-fd}d`:fd===0?'hoy':`en ${fd}d`}</span>`:'';let rv=`<div class="pn">${p.reva||''}</div>`;if(p.seca)rv+=`<div class="ps">${p.seca}</div>`;if(p.eda)rv+=`<div class="ps">${p.eda}</div>`;if(p.emaila)rv+=`<div class="ps">${p.emaila}</div>`;if(p.revb){rv+=`<div style="margin-top:4px"><div class="pn">${p.revb}</div>`;if(p.edb)rv+=`<div class="ps">${p.edb}</div>`;if(p.emailb)rv+=`<div class="ps">${p.emailb}</div></div>`;}return`<tr><td class="ca" style="font-weight:500">${p.titulo}</td><td class="cr">${rv}</td><td class="cs">${badge(p.estado)}</td><td class="ce" style="color:#888">${fmt(p.enviado)}</td><td class="cf">${fs2}</td><td class="cn"><div class="nt">${p.notas||''}</div>${p.historial?`<div class="nh">${p.historial}</div>`:''}</td><td class="cx"><div class="ract"><button class="ib" onclick="editP(${p.id})">Editar</button><button class="ib" onclick="delP(${p.id})">×</button></div></td></tr>`;}).join('');}
-
-function rConcursos(){document.getElementById('clist').innerHTML=concursos.map(c=>{const d=c.fallo?dd(c.fallo):null;const ds=d!==null?(d<0?`Falló hace ${-d}d`:`Fallo en ${d}d: ${fmt(c.fallo)}`):'';const urgent=d!==null&&d>=0&&d<=7;return`<div class="ccard" style="${urgent?'border-color:var(--pk3);background:var(--pk0);':''}"><div class="ct">${c.titulo}</div><div class="cp">${c.concurso}</div><div class="ccat">${c.cat}</div>${c.notas?`<div class="cnote">${c.notas}</div>`:''}<div class="cfoot"><span class="badge b-env">${c.estado}</span><div style="display:flex;gap:4px;align-items:center"><span class="cfallo" style="${urgent?'color:var(--pk4);font-weight:500;':''}">${ds}</span><button class="ib" onclick="editC(${c.id})">Editar</button><button class="ib" onclick="delC(${c.id})">×</button></div></div></div>`;}).join('');}
-
+function rTable(){document.getElementById('fbar').innerHTML=['Todos','Enviados','Follow-up','Listos','En proceso','Publicados','Rechazados'].map(f=>`<button class="fb${f===fil?' on':''}" onclick="setF('${f}')">${f}</button>`).join('');const map={Enviados:'Enviado',Listos:'Listo','En proceso':'En proceso',Publicados:'Publicado','Follow-up':'Follow-up',Rechazados:'Rechazado'};const rows=fil==='Todos'?pitches:pitches.filter(p=>p.estado===map[fil]);document.getElementById('ptable').innerHTML=rows.map(p=>{const fd=p.followup?dd(p.followup):null;const fs=p.followup?`${fmt(p.followup)}<br><span class="db${fd<0?' late':''}">${fd<0?`hace ${-fd}d`:fd===0?'hoy':`en ${fd}d`}</span>`:'';let rv=`<div class="pn">${p.reva||''}</div>`;if(p.seca)rv+=`<div class="ps">${p.seca}</div>`;if(p.eda)rv+=`<div class="ps">${p.eda}</div>`;if(p.emaila)rv+=`<div class="ps">${p.emaila}</div>`;if(p.revb){rv+=`<div style="margin-top:4px"><div class="pn">${p.revb}</div>`;if(p.edb)rv+=`<div class="ps">${p.edb}</div>`;if(p.emailb)rv+=`<div class="ps">${p.emailb}</div></div>`;}return`<tr><td class="ca" style="font-weight:500">${p.titulo}</td><td class="cr">${rv}</td><td class="cs">${badge(p.estado)}</td><td class="ce" style="color:#888">${fmt(p.enviado)}</td><td class="cf">${fs}</td><td class="cn"><div class="nt">${p.notas||''}</div>${p.historial?`<div class="nh">${p.historial}</div>`:''}</td><td class="cx"><div class="ract"><button class="ib" onclick="editP(${p.id})">Editar</button><button class="ib" onclick="delP(${p.id})">×</button></div></td></tr>`;}).join('');}
+function rConcursos(){document.getElementById('clist').innerHTML=concursos.map(c=>{const d=c.fallo?dd(c.fallo):null;const ds=d!==null?(d<0?`Falló hace ${-d}d`:`Fallo en ${d}d: ${fmt(c.fallo)}`):'';const u=d!==null&&d>=0&&d<=7;return`<div class="ccard" style="${u?'border-color:var(--pk3);background:var(--pk0);':''}"><div class="ct">${c.titulo}</div><div class="cp">${c.concurso}</div><div class="ccat">${c.cat}</div>${c.notas?`<div class="cnote">${c.notas}</div>`:''}<div class="cfoot"><span class="badge b-env">${c.estado}</span><div style="display:flex;gap:4px;align-items:center"><span class="cfallo" style="${u?'color:var(--pk4);font-weight:500;':''}">${ds}</span><button class="ib" onclick="editC(${c.id})">Editar</button><button class="ib" onclick="delC(${c.id})">×</button></div></div></div>`;}).join('');}
 function setF(f){fil=f;rTable();}
 function swTab(t,el){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));el.classList.add('active');document.getElementById('pitchesTab').style.display=t==='pitches'?'':'none';document.getElementById('concursosTab').style.display=t==='concursos'?'':'none';document.getElementById('newBtn').textContent=t==='pitches'?'+ Nuevo pitch':'+ Nuevo concurso';document.getElementById('newBtn').onclick=t==='pitches'?openNewModal:openNewConcursoModal;}
 function openNewModal(){eid=null;document.getElementById('mT').textContent='Nuevo pitch';['titulo','reva','seca','eda','emaila','revb','secb','edb','emailb','link','notas','historial'].forEach(f=>document.getElementById('f-'+f).value='');document.getElementById('f-metodo').value='Email';document.getElementById('f-estado').value='Listo';document.getElementById('f-enviado').value='';document.getElementById('f-followup').value='';document.getElementById('pitchModal').classList.add('open');}
-function editP(id){const p=pitches.find(x=>x.id===id);if(!p)return;eid=id;document.getElementById('mT').textContent='Editar pitch';document.getElementById('f-titulo').value=p.titulo||'';document.getElementById('f-reva').value=p.reva||'';document.getElementById('f-seca').value=p.seca||'';document.getElementById('f-eda').value=p.eda||'';document.getElementById('f-emaila').value=p.emaila||'';document.getElementById('f-revb').value=p.revb||'';document.getElementById('f-secb').value=p.secb||'';document.getElementById('f-edb').value=p.edb||'';document.getElementById('f-emailb').value=p.emailb||'';document.getElementById('f-metodo').value=p.metodo||'Email';document.getElementById('f-link').value=p.link||'';document.getElementById('f-notas').value=p.notas||'';document.getElementById('f-historial').value=p.historial||'';document.getElementById('f-estado').value=p.estado||'Listo';document.getElementById('f-enviado').value=p.enviado||'';document.getElementById('f-followup').value=p.followup||'';document.getElementById('pitchModal').classList.add('open');}
+function editP(id){const p=pitches.find(x=>x.id===id);if(!p)return;eid=id;document.getElementById('mT').textContent='Editar pitch';['titulo','reva','seca','eda','emaila','revb','secb','edb','emailb','metodo','link','notas','historial'].forEach(f=>document.getElementById('f-'+f).value=p[f]||'');document.getElementById('f-estado').value=p.estado||'Listo';document.getElementById('f-enviado').value=p.enviado||'';document.getElementById('f-followup').value=p.followup||'';document.getElementById('pitchModal').classList.add('open');}
 function savePitch(){const p={id:eid||Date.now(),titulo:document.getElementById('f-titulo').value,reva:document.getElementById('f-reva').value,seca:document.getElementById('f-seca').value,eda:document.getElementById('f-eda').value,emaila:document.getElementById('f-emaila').value,revb:document.getElementById('f-revb').value,secb:document.getElementById('f-secb').value,edb:document.getElementById('f-edb').value,emailb:document.getElementById('f-emailb').value,estado:document.getElementById('f-estado').value,metodo:document.getElementById('f-metodo').value,enviado:document.getElementById('f-enviado').value,followup:document.getElementById('f-followup').value,link:document.getElementById('f-link').value,notas:document.getElementById('f-notas').value,historial:document.getElementById('f-historial').value};if(eid){const i=pitches.findIndex(x=>x.id===eid);pitches[i]=p;}else pitches.push(p);closeModal();saveData();render();}
 async function delP(id){if(!confirm('¿Eliminar?'))return;pitches=pitches.filter(p=>p.id!==id);await sb.from('pitch_pitches').delete().eq('id',id);render();}
 function closeModal(){document.getElementById('pitchModal').classList.remove('open');}
@@ -281,5 +226,7 @@ function saveConcurso(){const c={id:ecid||Date.now(),titulo:document.getElementB
 async function delC(id){if(!confirm('¿Eliminar?'))return;concursos=concursos.filter(c=>c.id!==id);await sb.from('pitch_concursos').delete().eq('id',id);render();}
 function closeConcursoModal(){document.getElementById('concursoModal').classList.remove('open');}
 function exportCSV(){const h=['Título','Revista A','Sección A','Editor A','Email A','Revista B','Sección B','Editor B','Email B','Estado','Método','Enviado','Follow-up','Link','Notas','Historial'];const r=pitches.map(p=>[p.titulo,p.reva,p.seca,p.eda,p.emaila,p.revb,p.secb,p.edb,p.emailb,p.estado,p.metodo,p.enviado,p.followup,p.link,p.notas,p.historial].map(v=>`"${(v||'').replace(/"/g,'""')}"`).join(','));const csv=[h.join(','),...r].join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download=`pitch_tracker_${td2()}.csv`;a.click();}
-
 loadData();
+</script>
+</body>
+</html>
