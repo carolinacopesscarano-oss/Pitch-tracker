@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <title>pitch tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
 <style>
@@ -236,9 +236,9 @@ tr:hover td{background:var(--pk0);}
 </div>
 
 <script>
-const const SUPA_URL="https://owsanfynwpqcovygcpgh.supabase.co";
+const SUPA_URL="https://owsanfynwpqcovygcpgh.supabase.co";
 const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93c2FuZnlud3BxY292eWdjcGdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczNDczMDksImV4cCI6MjA5MjkyMzMwOX0.8D7kmwcn4p6Ys1qHccWy0Ttr1jKsiwlWnlBAdlWJWns";
-const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
+const sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
 
 let pitches=[],concursos=[],eid=null,ecid=null,fil='Todos';
 
